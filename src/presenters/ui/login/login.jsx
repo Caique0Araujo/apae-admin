@@ -4,8 +4,9 @@ import { Formik } from 'formik';
 import './css/Login.min.css';
 import { postLogin } from "../../../infra/repositories/user-repository";
 import { ToastContainer, toast } from 'react-toastify';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LogoApae from '../../../assets/images/logo-apae.png';
+import { useCookies } from "react-cookie";
 
 const schema = yup
     .object()
@@ -26,18 +27,25 @@ const schema = yup
 export default function Login() {
 
     const [ error, setError ] = useState(null);
+    const [ cookies, setCookie, removeCookie ] = useCookies(['token']);
+
+
+    useEffect(() => {
+        removeCookie('token', { path: '/' })
+    });
 
     const _submit = (data, { setSubmitting }) => {
         setError(null);
 
         postLogin(data.login, data.password)
         .then((res) => {
-            // TODO: Save TOKEN
-            console.log(res);
+            const expiresUTCDate = new Date(Date.parse(res.expires_date_UTC))
+            setCookie('token', res.token, { path: '/', expires: expiresUTCDate });
         }).catch((err) => {
             if (err.msg) {
                 setError(err.msg);
             } else {
+                console.log(err);
                 toast('Um problema aconteceu');
             }
         }).finally(() => {
