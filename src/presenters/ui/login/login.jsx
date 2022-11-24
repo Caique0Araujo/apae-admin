@@ -5,6 +5,7 @@ import './css/Login.min.css';
 import { postLogin } from "../../../infra/repositories/user-repository";
 import { ToastContainer, toast } from 'react-toastify';
 import { useState } from 'react';
+import LogoApae from '../../../assets/images/logo-apae.png';
 
 const schema = yup
     .object()
@@ -52,6 +53,12 @@ export default function Login() {
                 <Row className='vw-100'>
                     <div className="d-flex justify-content-center">
                         <div className="center-container shadow p-3 mb-5 bg-body rounded">
+
+                            <div className='d-flex flex-column justify-content-center align-items-center'>
+                                <img src={LogoApae} width={120}/>
+                                <h2 className='title'>APAE - SJE</h2>
+                            </div>
+
                             <Formik
                                 validationSchema={schema}
                                 onSubmit={_submit}
