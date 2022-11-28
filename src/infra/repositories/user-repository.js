@@ -17,7 +17,7 @@ export async function postLogin(login, password) {
 
         const response = await fetch(`${API_URL}/users/login`, requestData);
         const json = await response.json();
-        if (response.status != 200) {
+        if (response.status !== 200) {
             throw { msg: json };
         }
 

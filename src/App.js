@@ -7,7 +7,7 @@ function App() {
 
   const [ cookies ] = useCookies(['token']);
 
-  if (cookies.token == undefined) {
+  if (cookies.token === undefined) {
     return <Login/>
   }
 

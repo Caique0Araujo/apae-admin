@@ -19,7 +19,7 @@ const schema = yup
         password: yup
             .string()
             .required('Insira a sua senha')
-            .min(6, 'Insira no mínimo 6 caracteres')
+            .min(5, 'Insira no mínimo 5 caracteres')
             .max(15, 'Insira no máximo 15 caracteres')
     })
     .required();
@@ -27,7 +27,7 @@ const schema = yup
 export default function Login() {
 
     const [ error, setError ] = useState(null);
-    const [ _, setCookie ] = useCookies(['token']);
+    const [ , setCookie ] = useCookies(['token']);
 
     const _submit = (data, { setSubmitting }) => {
         setError(null);
@@ -58,8 +58,9 @@ export default function Login() {
                         <div className="center-container shadow p-3 mb-5 bg-body rounded">
 
                             <div className='d-flex flex-column justify-content-center align-items-center'>
-                                <img src={LogoApae} width={120}/>
-                                <h2 className='title'>APAE - SJE</h2>
+                                <img alt='APAE logo' src={LogoApae} width={120}/>
+                                <h2>APAE - SJE</h2>
+                                <h3>Setor Administrativo</h3>
                             </div>
 
                             <Formik
