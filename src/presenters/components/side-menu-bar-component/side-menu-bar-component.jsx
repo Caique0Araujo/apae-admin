@@ -2,6 +2,8 @@ import { Container, Nav } from "react-bootstrap";
 import SideMenuItemComponent from "../side-menu-item-component/side-menu-item-component";
 import './css/SideMenuBarComponent.min.css';
 import LogoApae from '../../../assets/images/logo-apae.png';
+import { FaHome, FaUserAlt, FaNewspaper } from 'react-icons/fa';
+import { IoBasket } from 'react-icons/io5';
 
 export default function SideMenuBarComponent(props) {
     return (
@@ -15,9 +17,10 @@ export default function SideMenuBarComponent(props) {
             </Container>
             <div className="position-sticky">
                 <div className="list-group list-group-flush mx-3 mt-4">
-                    <SideMenuItemComponent text='Usuários' to='#'/>
-                    <SideMenuItemComponent text='Notícias' to='#' active={true}/>
-                    <SideMenuItemComponent text='Produtos' to='#'/>
+                    <SideMenuItemComponent text='Início' icon={<FaHome/>} to='/' active={true}/>
+                    <SideMenuItemComponent text='Usuários' icon={<FaUserAlt/>} to='#'/>
+                    <SideMenuItemComponent text='Notícias' icon={<FaNewspaper/>} to='#'/>
+                    <SideMenuItemComponent text='Produtos' icon={<IoBasket/>} to='#'/>
                 </div>
             </div>
         </Nav>
