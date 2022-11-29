@@ -2,6 +2,7 @@ import Login from "./presenters/ui/login/login";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { useCookies } from "react-cookie";
+import Home from "./presenters/ui/home/home";
 
 function App() {
 
@@ -12,9 +13,7 @@ function App() {
   }
 
   return (
-    <div>
-      <p>Logado</p>
-    </div>
+    <Home/>
   );
 }
 

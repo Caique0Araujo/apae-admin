@@ -1,0 +1,35 @@
+$list-group-hover-bg: #5a5a7085;
+$list-group-action-hover-color: #ffffff;
+
+$list-group-active-bg: #5A5A70;
+$list-group-active-color: #FFFFFF;
+
+$list-group-bg: transparent;
+$list-group-color: #ffffff;
+
+@import '../../../../../node_modules/bootstrap/scss/bootstrap.scss';
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+  width: 240px;
+  z-index: 600;
+  background-color: #2F2F3B;
+}
+
+  h3 {
+    color: #FFFFFF;
+    font-size: 18px;
+  }
+
+  .sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
