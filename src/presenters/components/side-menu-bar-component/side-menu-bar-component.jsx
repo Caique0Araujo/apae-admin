@@ -18,7 +18,7 @@ export default function SideMenuBarComponent(props) {
             <div className="position-sticky">
                 <div className="list-group list-group-flush mx-3 mt-4">
                     <SideMenuItemComponent text='Início' icon={<FaHome/>} to='/' active={true}/>
-                    <SideMenuItemComponent text='Usuários' icon={<FaUserAlt/>} to='#'/>
+                    <SideMenuItemComponent text='Usuários' icon={<FaUserAlt/>} to='/usuarios'/>
                     <SideMenuItemComponent text='Notícias' icon={<FaNewspaper/>} to='#'/>
                     <SideMenuItemComponent text='Produtos' icon={<IoBasket/>} to='#'/>
                 </div>

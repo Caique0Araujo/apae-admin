@@ -1,5 +1,4 @@
 import { Container } from 'react-bootstrap';
-import './css/Home.min.css';
 
 export default function Home() {
     return (

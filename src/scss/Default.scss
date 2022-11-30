@@ -1,0 +1,29 @@
+$list-group-hover-bg: #5a5a7085;
+$list-group-action-hover-color: #ffffff;
+
+$list-group-active-bg: #5A5A70;
+$list-group-active-color: #FFFFFF;
+
+$list-group-bg: transparent;
+$list-group-color: #ffffff;
+
+$input-padding-y: 10px;
+$input-bg: #F2F2F2;
+$input-border-color: #F2F2F2;
+$input-border-width: 2px;
+$input-placeholder-color: #666666;
+$input-border-radius: 12px;
+
+$input-focus-border-color: #4089FB;
+$input-focus-box-shadow: 0 0 0 0;
+
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: #4089FB !important;
+    border-color: #4089FB !important;
+}
+
+main {
+    padding-left: 240px;
+}

@@ -5,6 +5,8 @@ import { useCookies } from "react-cookie";
 import Home from "./presenters/ui/home/home";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SideMenuBarComponent from "./presenters/components/side-menu-bar-component/side-menu-bar-component";
+import Users from "./presenters/ui/users/users";
+import './css/Default.min.css';
 
 function App() {
 
@@ -22,6 +24,7 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home/>}/>
+        <Route path='/usuarios' element={<Users token={cookies.token}/>}/>
       </Routes>
     </BrowserRouter>
   );

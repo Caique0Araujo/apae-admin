@@ -40,8 +40,7 @@ export default function Login() {
             if (err.msg) {
                 setError(err.msg);
             } else {
-                console.log(err);
-                toast('Um problema aconteceu');
+                toast('Ocorreu um erro interno');
             }
         }).finally(() => {
             setSubmitting(false);
