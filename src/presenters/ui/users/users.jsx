@@ -4,6 +4,8 @@ import './css/Users.min.css';
 import * as yup from 'yup';
 import { postCreateUser } from "../../../infra/repositories/user-repository";
 import { toast, ToastContainer } from 'react-toastify';
+import UserItem from "./components/user-item/user-item";
+import { useState } from "react";
 
 const schema = yup
     .object()
@@ -26,7 +28,42 @@ const schema = yup
     })
     .required();
 
+const users = [
+    {
+        "id": 1,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 2,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 3,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 4,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 5,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 6,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    }
+];
+
 export default function Users(props) {
+
+    const [userSelected, setUserSelected] = useState(-1);
 
     const _submit = (data, { setSubmitting, resetForm }) => {
         postCreateUser(data.name, data.login, data.password, props.token)
@@ -44,6 +81,15 @@ export default function Users(props) {
             .finally(() => {
                 setSubmitting(false);
             });
+    }
+
+    const selectUser = (id) => {
+        if (userSelected === id) {
+            setUserSelected(-1);
+            return;
+        }
+
+        setUserSelected(id);
     }
 
     return (
@@ -121,8 +167,26 @@ export default function Users(props) {
 
                     <div className="bar vh-100"></div>
 
-                    <Col className="mt-5 pt-5">
-                        Mundo
+                    <Col className="d-flex flex-column mt-5 pt-5 mx-3 align-items-center">
+                        <h2 className='w-100'>Usuários cadastrados</h2>
+                        <p>Para editar dados de um usuário cadastrado basta clicar nele e os dados serão preenchidos nos campos ao lado para serem editados.<br/>Para excluir um usuário clique nele e o botão “Excluir” irá aparecer.</p>
+                    
+                        <Row>
+                            { 
+                                users.map((val) => 
+                                    <UserItem 
+                                        key={val.id} 
+                                        id={val.id} 
+                                        title={val.name} 
+                                        subtitle={val.login} 
+                                        active={userSelected === val.id} 
+                                        onClick={selectUser}
+                                    /> 
+                                ) 
+                            }
+                        </Row>
+
+                        { userSelected != -1 && <Button className="my-4 py-2 px-4">Excluir</Button> }
                     </Col>
                 </Row>
             </Container>
