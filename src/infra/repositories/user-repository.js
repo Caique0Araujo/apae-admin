@@ -60,3 +60,40 @@ export async function postCreateUser(name, login, password, token) {
         throw ex;
     }
 }
+
+const users = [
+    {
+        "id": 1,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 2,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 3,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 4,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 5,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    },
+    {
+        "id": 6,
+        "name": "Ana Maria Braga",
+        "login": "ana.braga"
+    }
+];
+
+export async function postGetAll() {
+    return users;
+}
