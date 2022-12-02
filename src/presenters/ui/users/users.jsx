@@ -33,6 +33,7 @@ export default function Users(props) {
     const [userSelected, setUserSelected] = useState(-1);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const token = props.token;
 
     useEffect(() => {
         getAllUsers();
@@ -42,7 +43,7 @@ export default function Users(props) {
         setLoading(true);
 
         setTimeout(() => {
-            postGetAll()
+            postGetAll(token)
             .then((res) => {
                 setUsers(res);
             })
@@ -61,7 +62,7 @@ export default function Users(props) {
     }
 
     const _submit = (data, { setSubmitting, resetForm }) => {
-        postCreateUser(data.name, data.login, data.password, props.token)
+        postCreateUser(data.name, data.login, data.password, token)
             .then(() => {
                 toast.success('Usuário criado com sucesso');
                 resetForm();
@@ -175,13 +176,13 @@ export default function Users(props) {
                         
                         <Row>
                             { 
-                                users.length > 0 && users.map((val) => 
+                                users.length > 0 && !loading && users.map((val) => 
                                     <UserItem 
-                                        key={val.id} 
-                                        id={val.id} 
+                                        key={val.id_user} 
+                                        id={val.id_user} 
                                         title={val.name} 
                                         subtitle={val.login} 
-                                        active={userSelected === val.id} 
+                                        active={userSelected === val.id_user} 
                                         onClick={selectUser}
                                     /> 
                                 ) 

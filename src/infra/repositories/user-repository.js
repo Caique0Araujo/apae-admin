@@ -61,39 +61,21 @@ export async function postCreateUser(name, login, password, token) {
     }
 }
 
-const users = [
-    {
-        "id": 1,
-        "name": "Ana Maria Braga",
-        "login": "ana.braga"
-    },
-    {
-        "id": 2,
-        "name": "Ana Maria Braga",
-        "login": "ana.braga"
-    },
-    {
-        "id": 3,
-        "name": "Ana Maria Braga",
-        "login": "ana.braga"
-    },
-    {
-        "id": 4,
-        "name": "Ana Maria Braga",
-        "login": "ana.braga"
-    },
-    {
-        "id": 5,
-        "name": "Ana Maria Braga",
-        "login": "ana.braga"
-    },
-    {
-        "id": 6,
-        "name": "Ana Maria Braga",
-        "login": "ana.braga"
+export async function postGetAll(token) {
+    try {
+        const response = await fetch(`${API_URL}/users/getAll`, {
+            headers: {
+                'authorization': `BEARER ${token}`
+            }
+        });
+    
+        if (response.status === 204) {
+            return [];
+        }
+    
+        const data = await response.json();
+        return data;
+    } catch (ex) {
+        throw ex;
     }
-];
-
-export async function postGetAll() {
-    return users;
 }
