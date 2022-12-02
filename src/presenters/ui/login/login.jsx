@@ -34,6 +34,7 @@ export default function Login() {
         postLogin(data.login, data.password)
         .then((res) => {
             setCookie('token', res.token, { path: '/' });
+            window.location.reload(false);
         }).catch((err) => {
             if (err.msg) {
                 setError(err.msg);

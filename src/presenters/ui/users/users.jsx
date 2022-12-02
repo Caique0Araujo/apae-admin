@@ -64,6 +64,7 @@ export default function Users(props) {
                     if (err.status === 401) {
                         setCookie('token', '', { path: '/' });
                         navigate('/');
+                        window.location.reload(false);
                         return;
                     }
 
