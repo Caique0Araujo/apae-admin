@@ -1,4 +1,5 @@
 import { Col } from "react-bootstrap";
+import './css/UserItem.min.css';
 
 export default function UserItem(props) {
 
