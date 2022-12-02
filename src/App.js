@@ -1,7 +1,7 @@
 import Login from "./presenters/ui/login/login";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { useCookies } from "react-cookie";
+import useCookie from "react-use-cookie";
 import Home from "./presenters/ui/home/home";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SideMenuBarComponent from "./presenters/components/side-menu-bar-component/side-menu-bar-component";
@@ -10,9 +10,9 @@ import './css/Default.min.css';
 
 function App() {
 
-  const [ cookies ] = useCookies(['token']);
+  const [ token ] = useCookie('token', '');
 
-  if (cookies.token === undefined) {
+  if (token === '') {
     return <Login/>
   }
 
@@ -24,7 +24,7 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/usuarios' element={<Users token={cookies.token}/>}/>
+        <Route path='/usuarios' element={<Users />}/>
       </Routes>
     </BrowserRouter>
   );

@@ -68,6 +68,11 @@ export async function postGetAll(token) {
                 'authorization': `BEARER ${token}`
             }
         });
+
+        if (response.status === 401) {
+            const error = { status: 401 };
+            throw error;
+        }
     
         if (response.status === 204) {
             return [];
@@ -75,6 +80,22 @@ export async function postGetAll(token) {
     
         const data = await response.json();
         return data;
+    } catch (ex) {
+        throw ex;
+    }
+}
+
+export async function deleteUser(id, token) {
+    try {
+        throw { msg: 'Ocorreu um problema ao excluir o usuário' };
+    } catch (ex) {
+        throw ex;
+    }
+}
+
+export async function getUserById(id, token) {
+    try {
+        throw { msg: 'Ocorreu um problema ao buscar os dados do usuário.' };
     } catch (ex) {
         throw ex;
     }

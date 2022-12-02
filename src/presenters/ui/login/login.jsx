@@ -6,7 +6,7 @@ import { postLogin } from "../../../infra/repositories/user-repository";
 import { ToastContainer, toast } from 'react-toastify';
 import { useState } from 'react';
 import LogoApae from '../../../assets/images/logo-apae.png';
-import { useCookies } from "react-cookie";
+import { setCookie } from "react-use-cookie";
 
 const schema = yup
     .object()
@@ -27,15 +27,13 @@ const schema = yup
 export default function Login() {
 
     const [ error, setError ] = useState(null);
-    const [ , setCookie ] = useCookies(['token']);
 
     const _submit = (data, { setSubmitting }) => {
         setError(null);
 
         postLogin(data.login, data.password)
         .then((res) => {
-            const expiresUTCDate = new Date(Date.parse(res.expires_date_UTC))
-            setCookie('token', res.token, { path: '/', expires: expiresUTCDate });
+            setCookie('token', res.token, { path: '/' });
         }).catch((err) => {
             if (err.msg) {
                 setError(err.msg);

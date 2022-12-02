@@ -1,11 +1,13 @@
-import { Formik } from "formik";
+import { Formik, useFormik } from "formik";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import './css/Users.min.css';
 import * as yup from 'yup';
-import { postCreateUser, postGetAll } from "../../../infra/repositories/user-repository";
+import { deleteUser, getUserById, postCreateUser, postGetAll } from "../../../infra/repositories/user-repository";
 import { toast, ToastContainer } from 'react-toastify';
 import UserItem from "./components/user-item/user-item";
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { getCookie, setCookie } from 'react-use-cookie';
 
 const schema = yup
     .object()
@@ -30,10 +32,21 @@ const schema = yup
 
 export default function Users(props) {
 
+    const formikProps = useFormik({
+        initialValues: {
+            name: '',
+            login: '',
+            password: '',
+        },
+        validationSchema: schema,
+        onSubmit: schema,
+    });
+
     const [userSelected, setUserSelected] = useState(-1);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const token = props.token;
+    const navigate = useNavigate();
+    const token = getCookie('token');
 
     useEffect(() => {
         getAllUsers();
@@ -44,20 +57,26 @@ export default function Users(props) {
 
         setTimeout(() => {
             postGetAll(token)
-            .then((res) => {
-                setUsers(res);
-            })
-            .catch((err) => {
-                if (err.msg != null) {
-                    toast(err.msg);
-                } else {
-                    toast('Ocorreu um erro interno');
-                }
-                setUsers([]);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+                .then((res) => {
+                    setUsers(res);
+                })
+                .catch((err) => {
+                    if (err.status === 401) {
+                        setCookie('token', '', { path: '/' });
+                        navigate('/');
+                        return;
+                    }
+
+                    if (err.msg != null) {
+                        toast(err.msg);
+                    } else {
+                        toast('Ocorreu um erro interno');
+                    }
+                    setUsers([]);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         }, 2000);
     }
 
@@ -81,11 +100,48 @@ export default function Users(props) {
 
     const selectUser = (id) => {
         if (userSelected === id) {
+            formikProps.resetForm();
             setUserSelected(-1);
             return;
         }
 
         setUserSelected(id);
+        getUserById(id, token)
+            .then((res) => {
+                formikProps.setFieldValue("name", res.name);
+                formikProps.setFieldValue("login", res.login);
+                formikProps.setFieldValue("password", res.password);
+            })
+            .catch((err) => {
+                if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+
+                setUserSelected(-1);
+            });
+    }
+
+    const deleteSelectedUser = () => {
+        if (userSelected === -1) {
+            toast('Selecione um usuário');
+            return;
+        }
+
+        deleteUser(userSelected, token)
+            .then(() => {
+                toast.success('Usuário deletado');
+                setUserSelected(-1);
+                getAllUsers();
+            })
+            .catch((err) => {
+                if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            });
     }
 
     return (
@@ -107,57 +163,48 @@ export default function Users(props) {
                                 password: '',
                             }}
                         >
-                            {({
-                                handleSubmit,
-                                handleChange,
-                                values,
-                                touched,
-                                errors,
-                                isSubmitting
-                            }) => (
-                                <Form noValidate onSubmit={handleSubmit} className='d-flex flex-column align-items-center my-4'>
-                                    <Form.Group className="my-2 w-100">
-                                        <Form.Control 
-                                            placeholder="Nome"
-                                            name="name"
-                                            value={values.name || ''}
-                                            onChange={handleChange}
-                                            isValid={touched.name && !errors.name}
-                                            isInvalid={!!errors.name}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
-                                    </Form.Group>
+                            <Form noValidate onSubmit={formikProps.handleSubmit} className='d-flex flex-column align-items-center my-4'>
+                                <Form.Group className="my-2 w-100">
+                                    <Form.Control 
+                                        placeholder="Nome"
+                                        name="name"
+                                        value={formikProps.values.name || ''}
+                                        onChange={formikProps.handleChange}
+                                        isValid={formikProps.touched.name && !formikProps.errors.name}
+                                        isInvalid={!!formikProps.errors.name}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{formikProps.errors.name}</Form.Control.Feedback>
+                                </Form.Group>
 
-                                    <Form.Group className="my-2 w-100">
-                                        <Form.Control 
-                                            placeholder="Login"
-                                            name="login"
-                                            value={values.login || ''}
-                                            onChange={handleChange}
-                                            isValid={touched.login && !errors.login}
-                                            isInvalid={!!errors.login}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.login}</Form.Control.Feedback>
-                                    </Form.Group>
+                                <Form.Group className="my-2 w-100">
+                                    <Form.Control 
+                                        placeholder="Login"
+                                        name="login"
+                                        value={formikProps.values.login || ''}
+                                        onChange={formikProps.handleChange}
+                                        isValid={formikProps.touched.login && !formikProps.errors.login}
+                                        isInvalid={!!formikProps.errors.login}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{formikProps.errors.login}</Form.Control.Feedback>
+                                </Form.Group>
 
-                                    <Form.Group className="my-2 w-100">
-                                        <Form.Control 
-                                            placeholder="Senha" 
-                                            type="password"
-                                            name="password"
-                                            value={values.password || ''}
-                                            onChange={handleChange}
-                                            isValid={touched.password && !errors.password}
-                                            isInvalid={!!errors.password}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
-                                    </Form.Group>
+                                <Form.Group className="my-2 w-100">
+                                    <Form.Control 
+                                        placeholder="Senha" 
+                                        type="password"
+                                        name="password"
+                                        value={formikProps.values.password || ''}
+                                        onChange={formikProps.handleChange}
+                                        isValid={formikProps.touched.password && !formikProps.errors.password}
+                                        isInvalid={!!formikProps.errors.password}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{formikProps.errors.password}</Form.Control.Feedback>
+                                </Form.Group>
 
-                                    <Button type="submit" className="my-4 py-2 px-4" disabled={isSubmitting}>
-                                        { isSubmitting ? <Spinner size="sm"/> : 'Cadastrar' }
-                                    </Button>
-                                </Form>
-                            )}
+                                <Button type="submit" className="my-4 py-2 px-4" disabled={formikProps.isSubmitting}>
+                                    { formikProps.isSubmitting ? <Spinner size="sm"/> : 'Cadastrar' }
+                                </Button>
+                            </Form>
                         </Formik>
                     </Col>
 
@@ -189,7 +236,7 @@ export default function Users(props) {
                             }
                         </Row>
 
-                        { userSelected !== -1 && <Button className="my-4 py-2 px-4">Excluir</Button> }
+                        { userSelected !== -1 && <Button className="my-4 py-2 px-4" onClick={deleteSelectedUser}>Excluir</Button> }
                     </Col>
                 </Row>
             </Container>
