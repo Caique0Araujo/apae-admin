@@ -85,7 +85,20 @@ export async function getAll(token) {
 }
 
 export async function deleteUser(id, token) {
-    throw { msg: 'Ocorreu um problema ao excluir o usuário' };
+    const response = await fetch(`${API_URL}/users/delete/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'authorization': `BEARER ${token}`
+        },
+    });
+
+    if (response.status === 204) {
+        return;
+    }
+
+    const json = await response.json();
+    const error = { msg: json };
+    throw error;
 }
 
 export async function getUserById(id, token) {
@@ -95,14 +108,12 @@ export async function getUserById(id, token) {
         },
     });
 
-    console.log(response);
     if (response.status === 200) {
         const json = await response.json();
-        console.log(json);
+        return json;
     }
 
     const json = await response.json();
-    console.log(json);
     const error = { msg: json };
 
     throw error;

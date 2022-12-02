@@ -115,7 +115,6 @@ export default function Users(props) {
             .then((res) => {
                 formikProps.setFieldValue("name", res.name);
                 formikProps.setFieldValue("login", res.login);
-                formikProps.setFieldValue("password", res.password);
             })
             .catch((err) => {
                 if (err.msg !== undefined) {
@@ -134,11 +133,14 @@ export default function Users(props) {
             return;
         }
 
+        // TODO: Usuário não pode deletar a si mesmo
+
         deleteUser(userSelected, token)
             .then(() => {
                 toast.success('Usuário deletado');
                 setUserSelected(-1);
                 getAllUsers();
+                formikProps.resetForm();
             })
             .catch((err) => {
                 if (err.msg !== undefined) {
