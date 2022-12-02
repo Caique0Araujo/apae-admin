@@ -2,12 +2,13 @@ import { Formik, useFormik } from "formik";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import './css/Users.min.css';
 import * as yup from 'yup';
-import { deleteUser, getUserById, postCreateUser, postGetAll } from "../../../infra/repositories/user-repository";
+import { deleteUser, getUserById, postCreateUser, getAll } from "../../../infra/repositories/user-repository";
 import { toast, ToastContainer } from 'react-toastify';
 import UserItem from "./components/user-item/user-item";
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { getCookie, setCookie } from 'react-use-cookie';
+import { getCookie } from 'react-use-cookie';
+import { invalidToken } from "../../utils/redirect";
 
 const schema = yup
     .object()
@@ -56,15 +57,13 @@ export default function Users(props) {
         setLoading(true);
 
         setTimeout(() => {
-            postGetAll(token)
+            getAll(token)
                 .then((res) => {
                     setUsers(res);
                 })
                 .catch((err) => {
                     if (err.status === 401) {
-                        setCookie('token', '', { path: '/' });
-                        navigate('/');
-                        window.location.reload(false);
+                        invalidToken(navigate);
                         return;
                     }
 
@@ -88,6 +87,11 @@ export default function Users(props) {
                 resetForm();
             })
             .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                    return;
+                }
+
                 if (err.msg !== undefined) {
                     toast(err.msg);
                 } else {

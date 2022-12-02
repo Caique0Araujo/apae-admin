@@ -27,39 +27,42 @@ export async function postLogin(login, password) {
 }
 
 export async function postCreateUser(name, login, password, token) {
-    try {
-        const data = {
-            'name': name,
-            'login': login,
-            'password': password
-        };
+    const data = {
+        'name': name,
+        'login': login,
+        'password': password
+    };
 
-        const requestData = {
-            body: JSON.stringify(data),
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': `BEARER ${token}`,
-            }
+    const requestData = {
+        body: JSON.stringify(data),
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': `BEARER ${token}`,
         }
-
-        const response = await fetch(`${API_URL}/users/create`, requestData);
-        if (response.status === 201)
-            return true;
-
-        const json = await response.json();
-        let error = {
-            msg: json
-        };
-        throw error;
-    } catch (ex) {
-        throw ex;
     }
+
+    const response = await fetch(`${API_URL}/users/create`, requestData);
+    
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    }
+
+    if (response.status === 201)
+        return true;
+
+    const json = await response.json();
+    let error = {
+        msg: json
+    };
+    throw error;
 }
 
-export async function postGetAll(token) {
+export async function getAll(token) {
     try {
         const response = await fetch(`${API_URL}/users/getAll`, {
+            method: 'GET',
             headers: {
                 'authorization': `BEARER ${token}`
             }
@@ -82,17 +85,25 @@ export async function postGetAll(token) {
 }
 
 export async function deleteUser(id, token) {
-    try {
-        throw { msg: 'Ocorreu um problema ao excluir o usuário' };
-    } catch (ex) {
-        throw ex;
-    }
+    throw { msg: 'Ocorreu um problema ao excluir o usuário' };
 }
 
 export async function getUserById(id, token) {
-    try {
-        throw { msg: 'Ocorreu um problema ao buscar os dados do usuário.' };
-    } catch (ex) {
-        throw ex;
+    const response = await fetch(`${API_URL}/users/getById/${id}`, {
+        headers: {
+          'authorization': `BEARER ${token}`,  
+        },
+    });
+
+    console.log(response);
+    if (response.status === 200) {
+        const json = await response.json();
+        console.log(json);
     }
+
+    const json = await response.json();
+    console.log(json);
+    const error = { msg: json };
+
+    throw error;
 }
