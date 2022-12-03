@@ -1,6 +1,15 @@
+import { useContext, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
+import { GlobalContext } from '../../utils/context';
 
 export default function Home() {
+
+    const [ , setActive ] = useContext(GlobalContext);
+
+    useEffect(() => {
+        setActive(0);
+    }, [setActive]);
+
     return (
         <div>
             <main>

@@ -5,10 +5,11 @@ import * as yup from 'yup';
 import { deleteUser, getUserById, postCreateUser, getAll, updateUser } from "../../../infra/repositories/user-repository";
 import { toast, ToastContainer } from 'react-toastify';
 import UserItem from "./components/user-item/user-item";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from 'react-use-cookie';
 import { invalidToken } from "../../utils/redirect";
+import { GlobalContext } from "../../utils/context";
 
 const schema = yup
     .object()
@@ -37,11 +38,13 @@ export default function Users(props) {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const token = getCookie('token');
+    const [ , setActive ] = useContext(GlobalContext);
 
     useEffect(() => {
+        setActive(1);
         getAllUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [setActive]);
 
     const getAllUsers = () => {
         setLoading(true);

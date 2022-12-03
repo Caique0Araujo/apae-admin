@@ -7,26 +7,31 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SideMenuBarComponent from "./presenters/components/side-menu-bar-component/side-menu-bar-component";
 import Users from "./presenters/ui/users/users";
 import './css/Default.min.css';
+import { GlobalContext } from "./presenters/utils/context";
+import { useState } from "react";
 
 function App() {
 
   const [ token ] = useCookie('token', '');
+  const [ active, setActive ] = useState(0);
 
   if (token === '') {
     return <Login/>
   }
 
   return (
-    <BrowserRouter>
-      <header>
-          <SideMenuBarComponent/>
-      </header>
+    <GlobalContext.Provider value={[active, setActive]}>
+      <BrowserRouter>
+        <header>
+            <SideMenuBarComponent/>
+        </header>
 
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/usuarios' element={<Users />}/>
-      </Routes>
-    </BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Home/>}/>
+          <Route path='/usuarios' element={<Users />}/>
+        </Routes>
+      </BrowserRouter>
+    </GlobalContext.Provider>
   );
 }
 
