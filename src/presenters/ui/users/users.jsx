@@ -196,21 +196,13 @@ export default function Users(props) {
             <ToastContainer/>
 
             <Container fluid>
-                <Row>
+                <Row className='vh-100'>
                     <Col className='left-side mt-5 pt-5 mx-3'>
                         <h2>Usuários</h2>
                         <p>Cadastre aqui novos usuários que poderão administrar o sistema</p>
 
-                        <Formik
-                            validationSchema={schema}
-                            onSubmit={_submit}
-                            initialValues={{
-                                name: '',
-                                login: '',
-                                password: '',
-                            }}
-                        >
-                            <Form noValidate onSubmit={formikProps.handleSubmit} className='d-flex flex-column align-items-center my-4'>
+                        <Formik>
+                            <Form noValidate onSubmit={formikProps.handleSubmit} className='d-flex flex-fill flex-column align-items-center my-4'>
                                 <Form.Group className="my-2 w-100">
                                     <Form.Control 
                                         placeholder="Nome"
@@ -255,7 +247,7 @@ export default function Users(props) {
                         </Formik>
                     </Col>
 
-                    <div className="bar vh-100"></div>
+                    <div className="bar"></div>
 
                     <Col className="d-flex flex-column mt-5 pt-5 mx-3 align-items-center">
                         <h2 className='w-100'>Usuários cadastrados</h2>
