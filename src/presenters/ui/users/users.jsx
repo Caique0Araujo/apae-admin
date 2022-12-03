@@ -2,7 +2,7 @@ import { Formik, useFormik } from "formik";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import './css/Users.min.css';
 import * as yup from 'yup';
-import { deleteUser, getUserById, postCreateUser, getAll } from "../../../infra/repositories/user-repository";
+import { deleteUser, getUserById, postCreateUser, getAll, updateUser } from "../../../infra/repositories/user-repository";
 import { toast, ToastContainer } from 'react-toastify';
 import UserItem from "./components/user-item/user-item";
 import { useEffect, useState } from "react";
@@ -32,17 +32,6 @@ const schema = yup
     .required();
 
 export default function Users(props) {
-
-    const formikProps = useFormik({
-        initialValues: {
-            name: '',
-            login: '',
-            password: '',
-        },
-        validationSchema: schema,
-        onSubmit: schema,
-    });
-
     const [userSelected, setUserSelected] = useState(-1);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -51,15 +40,43 @@ export default function Users(props) {
 
     useEffect(() => {
         getAllUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getAllUsers = () => {
         setLoading(true);
 
-        setTimeout(() => {
-            getAll(token)
-                .then((res) => {
-                    setUsers(res);
+        getAll(token)
+            .then((res) => {
+                setUsers(res);
+            })
+            .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                    return;
+                }
+
+                if (err.msg != null) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+                setUsers([]);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+
+    const _submit = (data, { setSubmitting, resetForm }) => {
+        if (userSelected !== -1) {
+            setSubmitting(true);
+            updateUser(userSelected, data.name, data.login, data.password, token)
+                .then(() => {
+                    toast.success('Usuário atualizado com sucesso');
+                    resetForm();
+                    setUserSelected(-1);
+                    getAllUsers();
                 })
                 .catch((err) => {
                     if (err.status === 401) {
@@ -67,24 +84,23 @@ export default function Users(props) {
                         return;
                     }
 
-                    if (err.msg != null) {
+                    if (err.msg !== undefined) {
                         toast(err.msg);
                     } else {
-                        toast('Ocorreu um erro interno');
+                        toast('Ocorreu um erro interno')
                     }
-                    setUsers([]);
                 })
                 .finally(() => {
-                    setLoading(false);
+                    setSubmitting(false); 
                 });
-        }, 2000);
-    }
+            return;
+        }
 
-    const _submit = (data, { setSubmitting, resetForm }) => {
         postCreateUser(data.name, data.login, data.password, token)
             .then(() => {
                 toast.success('Usuário criado com sucesso');
                 resetForm();
+                getAllUsers();
             })
             .catch((err) => {
                 if (err.status === 401) {
@@ -103,6 +119,16 @@ export default function Users(props) {
             });
     }
 
+    const formikProps = useFormik({
+        initialValues: {
+            name: '',
+            login: '',
+            password: '',
+        },
+        validationSchema: schema,
+        onSubmit: _submit,
+    });
+
     const selectUser = (id) => {
         if (userSelected === id) {
             formikProps.resetForm();
@@ -114,9 +140,15 @@ export default function Users(props) {
         getUserById(id, token)
             .then((res) => {
                 formikProps.setFieldValue("name", res.name);
+                formikProps.setFieldError('name', undefined);
                 formikProps.setFieldValue("login", res.login);
             })
             .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                    return;
+                }
+                
                 if (err.msg !== undefined) {
                     toast(err.msg);
                 } else {
@@ -143,6 +175,11 @@ export default function Users(props) {
                 formikProps.resetForm();
             })
             .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                    return;
+                }
+                
                 if (err.msg !== undefined) {
                     toast(err.msg);
                 } else {
@@ -209,7 +246,7 @@ export default function Users(props) {
                                 </Form.Group>
 
                                 <Button type="submit" className="my-4 py-2 px-4" disabled={formikProps.isSubmitting}>
-                                    { formikProps.isSubmitting ? <Spinner size="sm"/> : 'Cadastrar' }
+                                    { formikProps.isSubmitting ? <Spinner size="sm"/> : 'Salvar' }
                                 </Button>
                             </Form>
                         </Formik>

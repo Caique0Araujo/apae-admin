@@ -47,9 +47,7 @@ export async function postCreateUser(name, login, password, token) {
     if (response.status === 401) {
         const error = { status: 401 };
         throw error;
-    }
-
-    if (response.status === 201)
+    } else if (response.status === 201)
         return true;
 
     const json = await response.json();
@@ -60,28 +58,24 @@ export async function postCreateUser(name, login, password, token) {
 }
 
 export async function getAll(token) {
-    try {
-        const response = await fetch(`${API_URL}/users/getAll`, {
-            method: 'GET',
-            headers: {
-                'authorization': `BEARER ${token}`
-            }
-        });
+    const response = await fetch(`${API_URL}/users/getAll`, {
+        method: 'GET',
+        headers: {
+            'authorization': `BEARER ${token}`
+        }
+    });
 
-        if (response.status === 401) {
-            const error = { status: 401 };
-            throw error;
-        }
-    
-        if (response.status === 204) {
-            return [];
-        }
-    
-        const data = await response.json();
-        return data;
-    } catch (ex) {
-        throw ex;
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
     }
+
+    if (response.status === 204) {
+        return [];
+    }
+
+    const data = await response.json();
+    return data;
 }
 
 export async function deleteUser(id, token) {
@@ -92,7 +86,10 @@ export async function deleteUser(id, token) {
         },
     });
 
-    if (response.status === 204) {
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 204) {
         return;
     }
 
@@ -108,7 +105,10 @@ export async function getUserById(id, token) {
         },
     });
 
-    if (response.status === 200) {
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 200) {
         const json = await response.json();
         return json;
     }
@@ -116,5 +116,35 @@ export async function getUserById(id, token) {
     const json = await response.json();
     const error = { msg: json };
 
+    throw error;
+}
+
+export async function updateUser(id, name, login, password, token) {
+
+    const data = {
+        'id_user': id,
+        'name': name,
+        'login': login,
+        'password': password,
+    };
+
+    const response = await fetch(`${API_URL}/users/edit`, {
+        body: JSON.stringify(data),
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': `BEARER ${token}`,
+        },
+    });
+
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 200) {
+        return;
+    }
+
+    const json = await response.json();
+    const error = { msg: json };
     throw error;
 }
