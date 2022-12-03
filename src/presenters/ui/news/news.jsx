@@ -1,0 +1,153 @@
+import { Formik, useFormik } from "formik";
+import { useContext, useEffect, useState } from "react";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import { ToastContainer } from "react-toastify";
+import { GlobalContext } from "../../utils/context";
+import * as yup from 'yup';
+import ImgBg from '../../../assets/images/image_background.png';
+import './css/News.min.css';
+
+const schema = yup
+    .object()
+    .shape({
+        title: yup
+            .string()
+            .required('Insira o título da Notícia')
+            .max(100, 'Insira no máximo 100 caracteres'),
+        text: yup
+            .string()
+            .required('Insira as informações sobre a Notícia')
+            .min(10, 'Insira no mínimo 10 caracteres'),
+        file: yup
+            .mixed()
+            .required('Insira a imagem de capa da Notícias')
+    })
+    .required();
+
+
+export default function News() {
+    const [ , setActive ] = useContext(GlobalContext);
+    const [ news ] = useState([]);
+    const [ loading ] = useState(false);
+    const [ newsSelected ] = useState(-1);
+
+    const _onSubmit = (data, { setSubmitting }) => {
+        setSubmitting(false);
+    }
+
+    const formikProps = useFormik({
+        onSubmit: _onSubmit,
+        validationSchema: schema,
+        initialValues: {
+            title: '',
+            text: '',
+            file: '',
+        },
+    });
+
+    useEffect(() => {
+        setActive(2);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setActive]);
+
+    return (
+        <main className="news">
+            <ToastContainer/>
+
+            <Container fluid>
+                <Row className='vh-100'>
+                    <Col className='left-side mt-5 pt-5 mx-3'>
+                        <h2>Notícias</h2>
+                        <p>Cadastre aqui novas notícias para aparecerem no site</p>
+
+                        <Formik>
+                            <Form noValidate onSubmit={formikProps.handleSubmit} className='d-flex flex-fill flex-column align-items-center my-4'>
+                                <Form.Group className="my-2 w-100">
+                                    <Form.Control 
+                                        placeholder="Título"
+                                        name="title"
+                                        value={formikProps.values.title || ''}
+                                        onChange={formikProps.handleChange}
+                                        isValid={formikProps.touched.title && !formikProps.errors.title}
+                                        isInvalid={!!formikProps.errors.title}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{formikProps.errors.title}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="my-2 w-100">
+                                    <Form.Control 
+                                        placeholder="Conteúdo"
+                                        name="text"
+                                        as="textarea"
+                                        value={formikProps.values.text || ''}
+                                        onChange={formikProps.handleChange}
+                                        isValid={formikProps.touched.text && !formikProps.errors.text}
+                                        isInvalid={!!formikProps.errors.text}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{formikProps.errors.text}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="my-2 w-100">
+                                    <Form.Control 
+                                        type="file"
+                                        name="file"
+                                        value={formikProps.values.file || ''}
+                                        onChange={formikProps.handleChange}
+                                        isValid={formikProps.touched.file && !formikProps.errors.file}
+                                        isInvalid={!!formikProps.errors.file}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{formikProps.errors.file}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Button type="submit" className="my-4 py-2 px-4" disabled={formikProps.isSubmitting}>
+                                    { formikProps.isSubmitting ? <Spinner size="sm"/> : 'Salvar' }
+                                </Button>
+                            </Form>
+                        </Formik>
+                    </Col>
+
+                    <div className="bar"></div>
+
+                    <Col className="d-flex flex-column mt-5 pt-5 mx-3 align-items-center">
+                        <h2 className='w-100'>Notícias cadastradas</h2>
+                        <p className='w-100'>Para editar dados de uma notícia cadastrado basta clicar nela e os dados serão preenchidos nos campos ao lado para serem editados.<br/>Para excluir uma notícia clique nela e o botão “Excluir” irá aparecer.</p>
+                    
+                        { 
+                            loading && 
+                                <div className='d-flex flex-fill justify-content-center align-items-center'>
+                                    <Spinner className="text-primary"/>
+                                </div>
+                        }
+
+                        {
+                            news.length === 0 && !loading &&
+                                <div className='w-100 d-flex mt-5'>
+                                    <img src={ImgBg} alt='background' height={350}/>
+                                </div>
+                        }
+                        
+                        <Row>
+                            { 
+                                /*news.length > 0 && !loading && news.map((val) => 
+                                    <UserItem 
+                                        key={val.id_user} 
+                                        id={val.id_user} 
+                                        title={val.name} 
+                                        subtitle={val.login} 
+                                        active={userSelected === val.id_user} 
+                                        onClick={selectUser}
+                                    /> 
+                                ) */
+                            }
+                        </Row>
+
+                        { 
+                            newsSelected !== -1 && 
+                                <Button className="my-4 py-2 px-4" /*onClick={deleteSelectedUser}*/>Excluir</Button> 
+                        }
+                    </Col>
+                </Row>
+            </Container>
+        </main>
+    );
+}

@@ -9,6 +9,7 @@ import Users from "./presenters/ui/users/users";
 import './css/Default.min.css';
 import { GlobalContext } from "./presenters/utils/context";
 import { useState } from "react";
+import News from "./presenters/ui/news/news";
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/usuarios' element={<Users />}/>
+          <Route path="/noticias" element={<News />}/>
         </Routes>
       </BrowserRouter>
     </GlobalContext.Provider>

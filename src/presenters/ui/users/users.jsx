@@ -192,7 +192,7 @@ export default function Users(props) {
     }
 
     return (
-        <main>
+        <main className="users">
             <ToastContainer/>
 
             <Container fluid>
@@ -251,7 +251,7 @@ export default function Users(props) {
 
                     <Col className="d-flex flex-column mt-5 pt-5 mx-3 align-items-center">
                         <h2 className='w-100'>Usuários cadastrados</h2>
-                        <p>Para editar dados de um usuário cadastrado basta clicar nele e os dados serão preenchidos nos campos ao lado para serem editados.<br/>Para excluir um usuário clique nele e o botão “Excluir” irá aparecer.</p>
+                        <p className='w-100'>Para editar dados de um usuário cadastrado basta clicar nele e os dados serão preenchidos nos campos ao lado para serem editados.<br/>Para excluir um usuário clique nele e o botão “Excluir” irá aparecer.</p>
                     
                         { 
                             loading && 
