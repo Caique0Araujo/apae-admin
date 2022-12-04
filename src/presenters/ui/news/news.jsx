@@ -6,6 +6,8 @@ import { GlobalContext } from "../../utils/context";
 import * as yup from 'yup';
 import ImgBg from '../../../assets/images/image_background.png';
 import './css/News.min.css';
+import { createNews } from "../../../infra/repositories/news-repository";
+import { getCookie } from 'react-use-cookie';
 
 const schema = yup
     .object()
@@ -30,9 +32,20 @@ export default function News() {
     const [ news ] = useState([]);
     const [ loading ] = useState(false);
     const [ newsSelected ] = useState(-1);
+    const [ file, setFile ] = useState(undefined);
+    const token = getCookie('token');
 
     const _onSubmit = (data, { setSubmitting }) => {
         setSubmitting(false);
+
+        const formData = new FormData();
+        formData.append('file', file, file.name);
+        formData.append('title', data.title);
+        formData.append('text', data.text);
+
+        console.log(formData);
+
+        createNews(formData, token);
     }
 
     const formikProps = useFormik({
@@ -41,7 +54,7 @@ export default function News() {
         initialValues: {
             title: '',
             text: '',
-            file: '',
+            file: undefined,
         },
     });
 
@@ -49,6 +62,13 @@ export default function News() {
         setActive(2);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setActive]);
+
+    const _setFile = (e) => {
+        const f = e.target.files[0];
+        setFile(f);
+
+        formikProps.setFieldValue('file', e.target.files);
+    }
 
     return (
         <main className="news">
@@ -91,8 +111,9 @@ export default function News() {
                                     <Form.Control 
                                         type="file"
                                         name="file"
-                                        value={formikProps.values.file || ''}
-                                        onChange={formikProps.handleChange}
+                                        value={undefined}
+                                        onChange={_setFile}
+                                        multiple={false}
                                         isValid={formikProps.touched.file && !formikProps.errors.file}
                                         isInvalid={!!formikProps.errors.file}
                                     />
