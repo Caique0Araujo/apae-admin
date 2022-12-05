@@ -5,6 +5,7 @@ export async function createNews(formData, token) {
         body: formData,
         method: 'POST',
         headers: {
+            'Content-Type': 'multipart/form-data; boundary=---011000010111000001101001',
             'authorization': `BEARER ${token}`
         },
     });

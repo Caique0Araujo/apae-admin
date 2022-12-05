@@ -39,7 +39,7 @@ export default function News() {
         setSubmitting(false);
 
         const formData = new FormData();
-        formData.append('file', file, file.name);
+        formData.append('file', file);
         formData.append('title', data.title);
         formData.append('text', data.text);
 
