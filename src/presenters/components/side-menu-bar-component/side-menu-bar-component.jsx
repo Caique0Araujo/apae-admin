@@ -31,7 +31,7 @@ export default function SideMenuBarComponent() {
                     <SideMenuItemComponent text='Início' icon={<FaHome/>} to='/' id={0}/>
                     <SideMenuItemComponent text='Usuários' icon={<FaUserAlt/>} to='/usuarios' id={1}/>
                     <SideMenuItemComponent text='Notícias' icon={<FaNewspaper/>} to='/noticias' id={2}/>
-                    <SideMenuItemComponent text='Produtos' icon={<IoBasket/>} to='#' id={3}/>
+                    <SideMenuItemComponent text='Produtos' icon={<IoBasket/>} to='/produtos' id={3}/>
                 </div>
             </div>
 

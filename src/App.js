@@ -10,6 +10,7 @@ import './css/Default.min.css';
 import { GlobalContext } from "./presenters/utils/context";
 import { useState } from "react";
 import News from "./presenters/ui/news/news";
+import Products from "./presenters/ui/products/products";
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
           <Route path='/' element={<Home/>}/>
           <Route path='/usuarios' element={<Users />}/>
           <Route path="/noticias" element={<News />}/>
+          <Route path="/produtos" element={<Products />}/>
         </Routes>
       </BrowserRouter>
     </GlobalContext.Provider>
