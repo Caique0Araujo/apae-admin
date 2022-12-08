@@ -20,3 +20,24 @@ export async function createNews(formData, token) {
     const error = { msg: json };
     throw error;
 }
+
+export async function getAll(token) {
+    const response = await fetch(`${API_URL}/news/getAll`, {
+        method: 'GET',
+        headers: {
+            'authorization': `BEARER ${token}`
+        }
+    });
+
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 200) {
+        const json = await response.json();
+        return json;
+    }
+
+    const json = await response.json();
+    const error = { msg: json };
+    throw error;
+}

@@ -6,10 +6,11 @@ import { GlobalContext } from "../../utils/context";
 import * as yup from 'yup';
 import ImgBg from '../../../assets/images/image_background.png';
 import './css/News.min.css';
-import { createNews } from "../../../infra/repositories/news-repository";
+import { createNews, getAll } from "../../../infra/repositories/news-repository";
 import { getCookie } from 'react-use-cookie';
 import { invalidToken } from "../../utils/redirect";
 import { useNavigate } from "react-router-dom";
+import NewsItem from "./components/news-item/news-item";
 
 const schema = yup
     .object()
@@ -31,9 +32,9 @@ const schema = yup
 
 export default function News() {
     const [ , setActive ] = useContext(GlobalContext);
-    const [ news ] = useState([]);
+    const [ news, setNews ] = useState([]);
     const [ loading ] = useState(false);
-    const [ newsSelected ] = useState(-1);
+    const [ newsSelected, setNewsSelected ] = useState(-1);
     const [ file, setFile ] = useState(undefined);
     const token = getCookie('token');
     const navigate = useNavigate();
@@ -78,6 +79,20 @@ export default function News() {
 
     useEffect(() => {
         setActive(2);
+
+        getAll(token)
+            .then((res) => {
+                setNews(res);
+            })
+            .catch((err) => {
+                if (err.msg === 401) {
+                    invalidToken(navigate);
+                } else if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setActive]);
 
@@ -86,6 +101,14 @@ export default function News() {
         setFile(f);
 
         formikProps.setFieldValue('file', e.target.files);
+    }
+
+    const selectNews = (id) => {
+        if (newsSelected === id) {
+            setNewsSelected(-1);
+            return;
+        }
+        setNewsSelected(id);
     }
 
     return (
@@ -167,16 +190,15 @@ export default function News() {
                         
                         <Row>
                             { 
-                                /*news.length > 0 && !loading && news.map((val) => 
-                                    <UserItem 
-                                        key={val.id_user} 
-                                        id={val.id_user} 
-                                        title={val.name} 
-                                        subtitle={val.login} 
-                                        active={userSelected === val.id_user} 
-                                        onClick={selectUser}
+                                news.length > 0 && !loading && news.map((val) => 
+                                    <NewsItem 
+                                        key={val.id_news} 
+                                        id={val.id_news} 
+                                        title={val.title} 
+                                        active={newsSelected === val.id_news} 
+                                        onClick={selectNews}
                                     /> 
-                                ) */
+                                ) 
                             }
                         </Row>
 
