@@ -33,7 +33,7 @@ const schema = yup
 export default function News() {
     const [ , setActive ] = useContext(GlobalContext);
     const [ news, setNews ] = useState([]);
-    const [ loading ] = useState(false);
+    const [ loading, setLoading ] = useState(false);
     const [ newsSelected, setNewsSelected ] = useState(-1);
     const [ file, setFile ] = useState(undefined);
     const token = getCookie('token');
@@ -51,6 +51,7 @@ export default function News() {
             .then(() => {
                 toast.success('Noticia criada com sucesso');
                 setFile(undefined);
+                getAllNews();
                 resetForm();
             })
             .catch((err) => {
@@ -79,6 +80,12 @@ export default function News() {
 
     useEffect(() => {
         setActive(2);
+        getAllNews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setActive]);
+
+    const getAllNews = () => {
+        setLoading(true);
 
         getAll(token)
             .then((res) => {
@@ -92,9 +99,11 @@ export default function News() {
                 } else {
                     toast('Ocorreu um erro interno');
                 }
+            })
+            .finally(() => {
+                setLoading(false);
             });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [setActive]);
+    }
 
     const _setFile = (e) => {
         const f = e.target.files[0];
