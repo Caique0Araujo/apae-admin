@@ -1,13 +1,15 @@
 import { Formik, useFormik } from "formik";
 import { useContext, useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { GlobalContext } from "../../utils/context";
 import * as yup from 'yup';
 import ImgBg from '../../../assets/images/image_background.png';
 import './css/News.min.css';
 import { createNews } from "../../../infra/repositories/news-repository";
 import { getCookie } from 'react-use-cookie';
+import { invalidToken } from "../../utils/redirect";
+import { useNavigate } from "react-router-dom";
 
 const schema = yup
     .object()
@@ -34,18 +36,34 @@ export default function News() {
     const [ newsSelected ] = useState(-1);
     const [ file, setFile ] = useState(undefined);
     const token = getCookie('token');
+    const navigate = useNavigate();
 
-    const _onSubmit = (data, { setSubmitting }) => {
-        setSubmitting(false);
+    const _onSubmit = (data, { setSubmitting, resetForm }) => {
+        setSubmitting(true);
 
         const formData = new FormData();
         formData.append('file', file);
         formData.append('title', data.title);
         formData.append('text', data.text);
 
-        console.log(formData);
-
-        createNews(formData, token);
+        createNews(formData, token)
+            .then(() => {
+                toast.success('Noticia criada com sucesso');
+                setFile(undefined);
+                resetForm();
+            })
+            .catch((err) => {
+                if (err.msg === 401) {
+                    invalidToken(navigate);
+                } else if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            })
+            .finally(() => {
+                setSubmitting(false);
+            });
     }
 
     const formikProps = useFormik({

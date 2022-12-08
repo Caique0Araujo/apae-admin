@@ -5,14 +5,18 @@ export async function createNews(formData, token) {
         body: formData,
         method: 'POST',
         headers: {
-            'Content-Type': 'multipart/form-data; boundary=---011000010111000001101001',
             'authorization': `BEARER ${token}`
         },
     });
 
-    console.log(response);
-    if (response.status === 200) {
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 201) {
         return;
     }
 
+    const json = await response.json();
+    const error = { msg: json };
+    throw error;
 }

@@ -90,7 +90,7 @@ export default function Users(props) {
                     if (err.msg !== undefined) {
                         toast(err.msg);
                     } else {
-                        toast('Ocorreu um erro interno')
+                        toast('Ocorreu um erro interno');
                     }
                 })
                 .finally(() => {
