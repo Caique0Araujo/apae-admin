@@ -41,3 +41,23 @@ export async function getAll(token) {
     const error = { msg: json };
     throw error;
 }
+
+export async function deleteNews(id, token) {
+    const response = await fetch(`${API_URL}/news/delete/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'authorization': `BEARER ${token}`
+        }
+    });
+
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 204) {
+        return;
+    }
+
+    const json = await response.json();
+    const error = { msg: json };
+    throw error;
+}

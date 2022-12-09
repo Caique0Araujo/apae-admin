@@ -6,7 +6,7 @@ import { GlobalContext } from "../../utils/context";
 import * as yup from 'yup';
 import ImgBg from '../../../assets/images/image_background.png';
 import './css/News.min.css';
-import { createNews, getAll } from "../../../infra/repositories/news-repository";
+import { createNews, deleteNews, getAll } from "../../../infra/repositories/news-repository";
 import { getCookie } from 'react-use-cookie';
 import { invalidToken } from "../../utils/redirect";
 import { useNavigate } from "react-router-dom";
@@ -55,7 +55,7 @@ export default function News() {
                 resetForm();
             })
             .catch((err) => {
-                if (err.msg === 401) {
+                if (err.status === 401) {
                     invalidToken(navigate);
                 } else if (err.msg !== undefined) {
                     toast(err.msg);
@@ -92,7 +92,7 @@ export default function News() {
                 setNews(res);
             })
             .catch((err) => {
-                if (err.msg === 401) {
+                if (err.status === 401) {
                     invalidToken(navigate);
                 } else if (err.msg !== undefined) {
                     toast(err.msg);
@@ -118,6 +118,30 @@ export default function News() {
             return;
         }
         setNewsSelected(id);
+    }
+
+    const deleteSelectedNews = () => {
+        if (newsSelected === -1) {
+            return;
+        }
+
+        deleteNews(newsSelected, token)
+            .then(() => {
+                toast.success('Noticia deletada com sucesso');
+                getAllNews();
+            })
+            .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                } else if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
     return (
@@ -205,6 +229,7 @@ export default function News() {
                                         id={val.id_news} 
                                         title={val.title} 
                                         active={newsSelected === val.id_news} 
+                                        buffer={val.image_path}
                                         onClick={selectNews}
                                     /> 
                                 ) 
@@ -213,7 +238,7 @@ export default function News() {
 
                         { 
                             newsSelected !== -1 && 
-                                <Button className="my-4 py-2 px-4" /*onClick={deleteSelectedUser}*/>Excluir</Button> 
+                                <Button className="my-4 py-2 px-4" onClick={deleteSelectedNews}>Excluir</Button> 
                         }
                     </Col>
                 </Row>
