@@ -129,6 +129,7 @@ export default function News() {
             .then(() => {
                 toast.success('Noticia deletada com sucesso');
                 getAllNews();
+                setNewsSelected(-1);
             })
             .catch((err) => {
                 if (err.status === 401) {

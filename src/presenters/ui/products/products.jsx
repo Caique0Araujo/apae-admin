@@ -1,12 +1,16 @@
 import { Formik, useFormik } from "formik";
 import { useContext, useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { GlobalContext } from "../../utils/context";
 import * as yup from 'yup';
 import ImgBg from '../../../assets/images/image_background.png';
 import './css/Products.min.css';
 import { getCookie } from 'react-use-cookie';
+import { createProduct, deleteProduct, getAll } from "../../../infra/repositories/product-repository";
+import { invalidToken } from "../../utils/redirect";
+import { useNavigate } from "react-router-dom";
+import ProductItem from "./components/product-item/product-item";
 
 const schema = yup
     .object()
@@ -31,21 +35,41 @@ const schema = yup
 
 export default function Products() {
     const [ , setActive ] = useContext(GlobalContext);
-    const [ products ] = useState([]);
-    const [ loading ] = useState(false);
-    const [ productSelected ] = useState(-1);
+    const [ products, setProducts ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
+    const [ productSelected, setProductSelected ] = useState(-1);
     const [ file, setFile ] = useState(undefined);
+    const navigate = useNavigate();
     const token = getCookie('token');
 
-    const _onSubmit = (data, { setSubmitting }) => {
+    const _onSubmit = (data, { setSubmitting, resetForm }) => {
         setSubmitting(false);
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('title', data.title);
+        formData.append('name', data.title);
         formData.append('description', data.description);
+        formData.append('price', data.price);
 
-        console.log(formData);
+        createProduct(formData, token)
+            .then(() => {
+                toast.success('Produto criado com sucesso');
+                setFile(undefined);
+                getAllProducts();
+                resetForm();
+            })
+            .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                } else if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            })
+            .finally(() => {
+                setSubmitting(false);
+            });
     }
 
     const formikProps = useFormik({
@@ -61,14 +85,67 @@ export default function Products() {
 
     useEffect(() => {
         setActive(3);
+
+        getAllProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setActive]);
+
+    const getAllProducts = () => {
+        setLoading(true);
+
+        getAll(token)
+            .then((res) => {
+                setProducts(res);
+            })
+            .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                } else if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
 
     const _setFile = (e) => {
         const f = e.target.files[0];
         setFile(f);
 
         formikProps.setFieldValue('file', e.target.files);
+    }
+
+    const selectProduct = (id) => {
+        if (productSelected === id) {
+            setProductSelected(-1);
+            return;
+        }
+        setProductSelected(id);
+    }
+
+    const deleteSelectedProduct = () => {
+        if (productSelected === -1) {
+            return;
+        }
+
+        deleteProduct(productSelected, token)
+            .then(() => {
+                toast.success('Noticia deletada com sucesso');
+                getAllProducts();
+                setProductSelected(-1);
+            })
+            .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                } else if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            });
     }
 
     return (
@@ -163,22 +240,24 @@ export default function Products() {
                         
                         <Row>
                             { 
-                                /*news.length > 0 && !loading && news.map((val) => 
-                                    <UserItem 
-                                        key={val.id_user} 
-                                        id={val.id_user} 
+                                products.length > 0 && !loading && products.map((val) => 
+                                    <ProductItem 
+                                        key={val.id_product} 
+                                        id={val.id_product} 
                                         title={val.name} 
                                         subtitle={val.login} 
-                                        active={userSelected === val.id_user} 
-                                        onClick={selectUser}
+                                        buffer={val.image_path}
+                                        price={val.price}
+                                        active={productSelected === val.id_product} 
+                                        onClick={selectProduct}
                                     /> 
-                                ) */
+                                ) 
                             }
                         </Row>
 
                         { 
                             productSelected !== -1 && 
-                                <Button className="my-4 py-2 px-4" /*onClick={deleteSelectedUser}*/>Excluir</Button> 
+                                <Button className="my-4 py-2 px-4" onClick={deleteSelectedProduct}>Excluir</Button> 
                         }
                     </Col>
                 </Row>

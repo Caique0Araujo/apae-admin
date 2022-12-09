@@ -1,7 +1,7 @@
 import { Col } from "react-bootstrap";
-import './css/NewsItem.min.css';
+import './css/ProductItem.min.css';
 
-export default function NewsItem(props) {
+export default function ProductItem(props) {
     var title = props.title;
     if (title.length >= 25) {
         title = props.title.substring(0,25);
@@ -16,6 +16,7 @@ export default function NewsItem(props) {
             <div className="image-container rounded mt-2 bg-white">
                 <img src={`data:image/png;base64,${buffer}`} alt={props.title} height={150} />
             </div>
+            <div className="price mt-2">{props.price}</div>
         </Col>
     );
 }
