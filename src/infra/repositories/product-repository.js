@@ -82,3 +82,25 @@ export async function getById(id, token) {
     const error = { msg: json };
     throw error;
 }
+
+export async function updateProduct(formData, token) {
+
+    const response = await fetch(`${API_URL}/products/update`, {
+        body: formData,
+        method: 'PUT',
+        headers: {
+            'authorization': `BEARER ${token}`,
+        },
+    });
+
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 200) {
+        return;
+    }
+
+    const json = await response.json();
+    const error = { msg: json };
+    throw error;
+}

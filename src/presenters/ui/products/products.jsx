@@ -1,5 +1,5 @@
 import { Formik, useFormik } from "formik";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
 import { GlobalContext } from "../../utils/context";
@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import ImgBg from '../../../assets/images/image_background.png';
 import './css/Products.min.css';
 import { getCookie } from 'react-use-cookie';
-import { createProduct, deleteProduct, getAll, getById } from "../../../infra/repositories/product-repository";
+import { createProduct, deleteProduct, getAll, getById, updateProduct } from "../../../infra/repositories/product-repository";
 import { invalidToken } from "../../utils/redirect";
 import { useNavigate } from "react-router-dom";
 import ProductItem from "./components/product-item/product-item";
@@ -52,6 +52,32 @@ export default function Products() {
         formData.append('name', data.title);
         formData.append('description', data.description);
         formData.append('price', data.price);
+
+        if (productSelected !== -1) {
+            formData.append('id_product', productSelected);
+
+            updateProduct(formData, token)
+                .then(() => {
+                    toast.success('Produto atualizado com sucesso');
+                    setFile(undefined);
+                    getAllProducts();
+                    resetForm();
+                    setProductSelected(-1);
+                })
+                .catch((err) => {
+                    if (err.status === 401) {
+                        invalidToken(navigate);
+                    } else if (err.msg !== undefined) {
+                        toast(err.msg);
+                    } else {
+                        toast('Ocorreu um erro interno');
+                    }
+                })
+                .finally(() => {
+                    setSubmitting(false);
+                }); 
+            return;
+        }
 
         createProduct(formData, token)
             .then(() => {
