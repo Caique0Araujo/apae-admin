@@ -1,5 +1,5 @@
 import { Formik, useFormik } from "formik";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
 import { GlobalContext } from "../../utils/context";
@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import ImgBg from '../../../assets/images/image_background.png';
 import './css/Products.min.css';
 import { getCookie } from 'react-use-cookie';
-import { createProduct, deleteProduct, getAll } from "../../../infra/repositories/product-repository";
+import { createProduct, deleteProduct, getAll, getById } from "../../../infra/repositories/product-repository";
 import { invalidToken } from "../../utils/redirect";
 import { useNavigate } from "react-router-dom";
 import ProductItem from "./components/product-item/product-item";
@@ -117,15 +117,54 @@ export default function Products() {
         const f = e.target.files[0];
         setFile(f);
 
-        formikProps.setFieldValue('file', e.target.files[0]);
+        formikProps.setFieldValue('file', f);
     }
 
     const selectProduct = (id) => {
         if (productSelected === id) {
+            formikProps.resetForm();
+            setFile(undefined);
             setProductSelected(-1);
             return;
         }
+
         setProductSelected(id);
+        getById(id, token)
+            .then((res) => {
+                const buffer = res.image_path;
+                const file = dataURLtoFile(`data:image/png;base64,${buffer}`, `${res.name}.png`);
+                
+                formikProps.setFieldValue('title', res.name);
+                formikProps.setFieldValue('description', res.description);
+                formikProps.setFieldValue('price', res.price);
+
+                setFile(file);
+                formikProps.setFieldValue('file', file);
+            })
+            .catch((err) => {
+                console.log(err);
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                } else if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            });
+    }
+
+    function dataURLtoFile(dataurl, filename) {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), 
+            n = bstr.length, 
+            u8arr = new Uint8Array(n);
+            
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        
+        return new File([u8arr], filename, {type:mime});
     }
 
     const deleteSelectedProduct = () => {
@@ -138,6 +177,8 @@ export default function Products() {
                 toast.success('Noticia deletada com sucesso');
                 getAllProducts();
                 setProductSelected(-1);
+                formikProps.resetForm();
+                setFile(undefined);
             })
             .catch((err) => {
                 if (err.status === 401) {
