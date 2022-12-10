@@ -29,6 +29,8 @@ const schema = yup
         file: yup
             .mixed()
             .required('Insira a imagem de capa do Produto')
+            .test('fileSize', 'A imagem deve ter no máximo 2MB', value =>  value && value.size <= 2097152)
+            .test('fileType', 'Apenas imagens PNG', value => value && value.type === 'image/png'),
     })
     .required();
 
@@ -78,7 +80,7 @@ export default function Products() {
         initialValues: {
             title: '',
             description: '',
-            price: 0,
+            price: undefined,
             file: undefined,
         },
     });
@@ -115,7 +117,7 @@ export default function Products() {
         const f = e.target.files[0];
         setFile(f);
 
-        formikProps.setFieldValue('file', e.target.files);
+        formikProps.setFieldValue('file', e.target.files[0]);
     }
 
     const selectProduct = (id) => {
@@ -205,6 +207,7 @@ export default function Products() {
                                         value={undefined}
                                         onChange={_setFile}
                                         multiple={false}
+                                        accept="image/x-png"
                                         isValid={formikProps.touched.file && !formikProps.errors.file}
                                         isInvalid={!!formikProps.errors.file}
                                     />

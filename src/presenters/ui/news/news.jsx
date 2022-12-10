@@ -26,6 +26,8 @@ const schema = yup
         file: yup
             .mixed()
             .required('Insira a imagem de capa da Notícias')
+            .test('fileSize', 'A imagem deve ter no máximo 2MB', value =>  value && value.size <= 2097152)
+            .test('fileType', 'Apenas imagens PNG', value => value && value.type === 'image/png'),
     })
     .required();
 
@@ -189,6 +191,7 @@ export default function News() {
                                         value={undefined}
                                         onChange={_setFile}
                                         multiple={false}
+                                        accept="image/x-png"
                                         isValid={formikProps.touched.file && !formikProps.errors.file}
                                         isInvalid={!!formikProps.errors.file}
                                     />
