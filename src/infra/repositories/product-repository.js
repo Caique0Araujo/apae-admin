@@ -104,3 +104,25 @@ export async function updateProduct(formData, token) {
     const error = { msg: json };
     throw error;
 }
+
+export async function countProduct(token) {
+
+    const response = await fetch(`${API_URL}/products/count`, {
+        method: 'GET',
+        headers: {
+            'authorization': `BEARER ${token}`,
+        },
+    });
+
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 200) {
+        const json = await response.json();
+        return json;
+    }
+
+    const json = await response.json();
+    const error = { msg: json };
+    throw error;
+}

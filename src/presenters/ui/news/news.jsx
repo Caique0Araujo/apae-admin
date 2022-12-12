@@ -209,7 +209,7 @@ export default function News() {
 
                     <Col className="d-flex flex-column mt-5 pt-5 mx-3 align-items-center">
                         <h2 className='w-100'>Notícias cadastradas</h2>
-                        <p className='w-100'>Para editar dados de uma notícia cadastrado basta clicar nela e os dados serão preenchidos nos campos ao lado para serem editados.<br/>Para excluir uma notícia clique nela e o botão “Excluir” irá aparecer.</p>
+                        <p className='w-100'>Para excluir uma notícia clique nela e o botão “Excluir” irá aparecer.</p>
                     
                         { 
                             loading && 
