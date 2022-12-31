@@ -18,7 +18,7 @@ const schema = yup
         title: yup
             .string()
             .required('Insira o título da Notícia')
-            .max(100, 'Insira no máximo 100 caracteres'),
+            .max(255, 'Insira no máximo 255 caracteres'),
         text: yup
             .string()
             .required('Insira as informações sobre a Notícia')
