@@ -10,11 +10,13 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { invalidToken } from "../../utils/redirect";
 import { countNews } from '../../../infra/repositories/news-repository';
+import { getUserByToken } from '../../../infra/repositories/user-repository';
 
 export default function Home() {
 
     const [ , setActive ] = useContext(GlobalContext);
     const [ token ] = reactUseCookie('token');
+    const [ userName, setUserName ] = useState('');
     const [ countProducts, setCountProducts] = useState(0);
     const [ news, setProducts] = useState(0);
     const navigate = useNavigate();
@@ -24,6 +26,7 @@ export default function Home() {
 
         getCountProducts();
         getCountNews();
+        getUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setActive]);
 
@@ -59,6 +62,22 @@ export default function Home() {
             });
     }
 
+    const getUser = () => {
+        getUserByToken(token)
+            .then((res) => {
+                setUserName(res.name);
+            })
+            .catch((err) => {
+                if (err.status === 401) {
+                    invalidToken(navigate);
+                } else if (err.msg !== undefined) {
+                    toast(err.msg);
+                } else {
+                    toast('Ocorreu um erro interno');
+                }
+            });
+    }
+
     return (
         <main className='pt-4'>
             <ToastContainer/>
@@ -72,7 +91,7 @@ export default function Home() {
                             </div>
                             <div className='d-flex flex-column ms-5'>
                                 <span className='mb-5 user-title'>Usuário Atual</span>
-                                <span className='user-name'>Ana Maria Braga de...</span>
+                                <span className='user-name'>{userName}</span>
                             </div>
                         </div>
                     </Col>

@@ -119,6 +119,27 @@ export async function getUserById(id, token) {
     throw error;
 }
 
+export async function getUserByToken(token) {
+    const response = await fetch(`${API_URL}/users/getByToken`, {
+        headers: {
+          'authorization': `BEARER ${token}`,  
+        },
+    });
+
+    if (response.status === 401) {
+        const error = { status: 401 };
+        throw error;
+    } else if (response.status === 200) {
+        const json = await response.json();
+        return json;
+    }
+
+    const json = await response.json();
+    const error = { msg: json };
+
+    throw error;
+}
+
 export async function updateUser(id, name, login, password, token) {
 
     const data = {
