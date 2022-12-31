@@ -82,14 +82,14 @@ export default function Home() {
                     <Col className='pe-4'>
                         <div className='p-5 rounded d-flex flex-column align-items-center card-container'>
                             <span className='pb-4 text-center card-title'>Número de notícias publicadas</span>
-                            <span className='py-3 card-qtd'>{countProducts}</span>
+                            <span className='py-3 card-qtd'>{news}</span>
                         </div>
                     </Col>
 
                     <Col className='pe-4'>
                         <div className='p-5 rounded d-flex flex-column align-items-center card-container'>
                             <span className='pb-4 text-center card-title'>Número de produtos no bazar</span>
-                            <span className='py-3 card-qtd'>{news}</span>
+                            <span className='py-3 card-qtd'>{countProducts}</span>
                         </div>
                     </Col>
                 </Row>
