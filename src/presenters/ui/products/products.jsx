@@ -29,8 +29,8 @@ const schema = yup
         file: yup
             .mixed()
             .required('Insira a imagem de capa do Produto')
-            .test('fileSize', 'A imagem deve ter no máximo 20MB', value =>  value && value.size <= 20000000)
-            .test('fileType', 'Apenas imagens PNG', value => value && value.type === 'image/png'),
+            .test('fileSize', 'A imagem deve ter no máximo 20MB', value => value && value[0].size <= 5000000)
+            .test('fileType', 'Apenas imagens PNG', value => value && value[0].type === 'image/png'),
     })
     .required();
 
