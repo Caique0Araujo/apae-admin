@@ -29,7 +29,9 @@ export async function getAll(token) {
         }
     });
 
-    if (response.status === 401) {
+    if (response.status === 404) {
+        return [];
+    } else if (response.status === 401) {
         const error = { status: 401 };
         throw error;
     } else if (response.status === 200) {
@@ -71,7 +73,11 @@ export async function countNews(token) {
         },
     });
 
-    if (response.status === 401) {
+    if (response.status === 404) {
+        return {
+            news_quantity: 0
+        };
+    } else if (response.status === 401) {
         const error = { status: 401 };
         throw error;
     } else if (response.status === 200) {

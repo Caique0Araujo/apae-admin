@@ -29,7 +29,9 @@ export async function getAll(token) {
         }
     });
 
-    if (response.status === 401) {
+    if (response.status === 404) {
+        return [];
+    } else if (response.status === 401) {
         const error = { status: 401 };
         throw error;
     } else if (response.status === 200) {
@@ -114,7 +116,11 @@ export async function countProduct(token) {
         },
     });
 
-    if (response.status === 401) {
+    if (response.status === 404) {
+        return {
+            products_quantity: 0
+        };
+    } else if (response.status === 401) {
         const error = { status: 401 };
         throw error;
     } else if (response.status === 200) {
