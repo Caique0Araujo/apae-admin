@@ -63,6 +63,7 @@ export default function Products() {
                     getAllProducts();
                     resetForm();
                     setProductSelected(-1);
+                    document.getElementById("fileInput").value = "";
                 })
                 .catch((err) => {
                     if (err.status === 401) {
@@ -85,6 +86,7 @@ export default function Products() {
                 setFile(undefined);
                 getAllProducts();
                 resetForm();
+                document.getElementById("fileInput").value = "";
             })
             .catch((err) => {
                 if (err.status === 401) {
@@ -269,6 +271,7 @@ export default function Products() {
 
                                 <Form.Group className="my-2 w-100">
                                     <Form.Control 
+                                        id="fileInput"
                                         type="file"
                                         name="file"
                                         value={undefined}

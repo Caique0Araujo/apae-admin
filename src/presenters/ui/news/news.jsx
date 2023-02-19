@@ -57,6 +57,7 @@ export default function News() {
                 setFile(undefined);
                 getAllNews();
                 resetForm();
+                document.getElementById("fileInput").value = "";
             })
             .catch((err) => {
                 if (err.status === 401) {
@@ -188,6 +189,7 @@ export default function News() {
 
                                 <Form.Group className="my-2 w-100">
                                     <Form.Control 
+                                        id="fileInput"
                                         type="file"
                                         name="file"
                                         value={undefined}
