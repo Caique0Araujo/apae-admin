@@ -30,7 +30,14 @@ const schema = yup
             .mixed()
             .required('Insira a imagem de capa do Produto')
             .test('fileSize', 'A imagem deve ter no máximo 20MB', value => value && value[0].size <= 5000000)
-            .test('fileType', 'Apenas imagens PNG', value => value && value[0].type === 'image/png'),
+            .test('fileType', 'Apenas imagens PNG, JPEG ou JPG', value => {
+                const isPng = value[0].type === 'image/png';
+                const isJpeg = value[0].type === 'image/jpeg';
+                const isJpg = value[0].type === 'image/jpg';
+                const isValidType = isPng || isJpeg || isJpg;
+                
+                return value && isValidType;
+            }),
     })
     .required();
 
@@ -277,7 +284,7 @@ export default function Products() {
                                         value={undefined}
                                         onChange={_setFile}
                                         multiple={false}
-                                        accept="image/x-png"
+                                        accept="image/x-png, image/jpeg, image/jpg"
                                         isValid={formikProps.touched.file && !formikProps.errors.file}
                                         isInvalid={!!formikProps.errors.file}
                                     />
