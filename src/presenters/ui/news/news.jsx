@@ -26,7 +26,9 @@ const schema = yup
         file: yup
             .mixed()
             .required('Insira a imagem de capa da Notícias')
-            .test('fileSize', 'A imagem deve ter no máximo 20MB', value => value && value[0].size <= 5000000)
+            .test('fileSize', 'A imagem deve ter no máximo 20MB', value => {
+                return value && value[0].size <= 5000000;
+            })
             .test('fileType', 'Apenas imagens PNG', value => value && value[0].type === 'image/png'),
     })
     .required();
@@ -109,7 +111,6 @@ export default function News() {
 
     const _setFile = (e) => {
         const f = e.target.files[0];
-        console.log(f);
         setFile(f);
 
         formikProps.setFieldValue('file', e.target.files);

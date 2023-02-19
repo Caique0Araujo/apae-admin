@@ -143,7 +143,7 @@ export default function Products() {
         const f = e.target.files[0];
         setFile(f);
 
-        formikProps.setFieldValue('file', f);
+        formikProps.setFieldValue('file', e.target.files);
     }
 
     const selectProduct = (id) => {
